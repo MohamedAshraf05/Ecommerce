@@ -1,4 +1,7 @@
+# View of users application
+
 import datetime , jwt
+from products.utils import AuthenticateUser
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from django.shortcuts import render
 from rest_framework.exceptions import AuthenticationFailed
@@ -7,17 +10,6 @@ from .serializers import UserSerializer
 from .models import User
 from rest_framework.response import Response
 # Create your views here.
-
-"""
-What RegisterView need :
-1. A Post Method to post these data:
-    a. first get the email
-    b. second get the password
-    c. serialize these data 
-    d. save it
-    e. return the response 
-"""
-
 
 class RegisterView(APIView):
     def post(self , request):
@@ -28,16 +20,6 @@ class RegisterView(APIView):
         else:
             return Response(serializers.errors)
         
-
-"""
-LoginView requirments:
-1. A Post Method to post these data:
-    a. email
-    b. password
-    c. find the user who matches these data
-    d. return the response
-"""
-
 class LoginView(APIView):
     def post(self , request):
         email = request.data['email']
@@ -75,31 +57,7 @@ class LoginView(APIView):
 
 class UserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('jwt')
-
-        if not token:
-            print("I couldn't get the token")
-            raise AuthenticationFailed("Unauthenticated!!")
-        
-        print(f"this is the token : {token}")
-        
-        try:
-            # Corrected algorithms to be plural
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            print("Token has expired")
-            raise AuthenticationFailed("Token has expired")
-        except jwt.InvalidTokenError:
-            print("Invalid token")
-            raise AuthenticationFailed("Invalid token")
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            raise AuthenticationFailed("Unauthenticated!!")
-
-
-        print("token is valid")    
-        # Fetch the user if the token is valid
-        user = User.objects.filter(id=payload['id']).first()
+        user = AuthenticateUser(request)
         if not user:
             raise AuthenticationFailed("User not found")
 

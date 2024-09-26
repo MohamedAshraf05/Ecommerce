@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
+    'products.apps.ProductsConfig',
     'rest_framework',
 ]
 
@@ -118,8 +119,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+# STATIC_ROOT = os.path.join(BASE_DIR , 'static') 
 STATIC_URL = 'static/'
-
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR , 'EcommerceApi/static'),
+# ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # this is the model where the data of the authenticated user will be stored in the app user model name User
 AUTH_USER_MODEL = 'users.User' 
